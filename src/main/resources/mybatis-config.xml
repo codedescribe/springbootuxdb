@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+<!--  <properties resource="db.properties"></properties> -->
+ <settings>
+     <setting name="logImpl" value="LOG4J2" /> 
+    <setting name="cacheEnabled" value="true"/><!-- 使用缓存 一级 -->
+     <setting name="mapUnderscoreToCamelCase" value="true" />  <!-- 驼峰命名自动匹配 -->
+  </settings>
+	<!-- mybatis分页插件 -->
+	<!-- <plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			config params as the following
+			<property name="pageSizeZero" value="true" />
+		</plugin>
+	</plugins> -->
+
+
+</configuration>

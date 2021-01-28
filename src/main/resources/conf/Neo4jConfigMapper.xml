@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.maxfan.springbootuxdb.mapper.Neo4jConfigMapper">
+   
+  <resultMap id="BaseResultMap" type="com.maxfan.springbootuxdb.entity.Neo4jConfig" >
+	<id property="id" column="ID" />
+	<result property="updatetime" column="UPDATETIME" />
+	<result property="createtime" column="CREATETIME" />
+	<result property="creator" column="CREATOR" />
+	<result property="name" column="NAME" />
+	<result property="describe" column="DESCRIBE" />
+	<result property="ip" column="IP" />
+	<result property="username" column="USERNAME" />
+	<result property="password" column="PASSWORD" />
+	<result property="url" column="URL" />
+	<result property="department" column="DEPARTMENT" />
+	<result property="type" column="TYPE" />
+	<result property="isuseful" column="ISUSEFUL" />
+	<result property="status" column="STATUS" />
+	<result property="departmentId" column="DEPARTMENTID" />
+  </resultMap>
+  <resultMap id="ResultVo" type="com.maxfan.springbootuxdb.entity.Neo4jConfigVo" >
+	<id property="id" column="ID" />
+	<result property="name" column="NAME" />
+	<result property="describe" column="DESCRIBE" />
+	<result property="updatetime" column="UPDATETIME" />
+	<result property="createtime" column="CREATETIME" />
+	<result property="type" column="TYPE" />
+	<result property="url" column="URL" />
+	<result property="status" column="STATUS" />
+	<result property="departmentId" column="DEPARTMENTID" />
+  </resultMap>
+    <sql id="select">
+		select * from "yftest"."c_knowledgegraph_neo4j"
+	</sql>
+	<sql id="where">
+	WHERE "OP"=0
+		<if test='name != null and name != ""'>
+			and NAME like concat("%",#{name},"%")
+		</if>
+		<if test='creator != null'>
+			and CREATOR = #{creator}
+		</if>
+		<if test='type != null and type !=""'>
+			and TYPE = #{type}
+		</if>
+	</sql>
+    <select id="findById" resultMap="BaseResultMap">
+       SELECT "ID","UPDATETIME","CREATETIME","CREATOR","NAME","DESCRIBE","IP"
+       ,"URL","DEPARTMENT","TYPE"
+       ,CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
+       ,CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+		,"DEPARTMENTID"
+		FROM "yftest"."c_knowledgegraph_neo4j"
+		WHERE "ID" = #{id}
+	</select>
+	<select id="findByIdAdmin" resultMap="BaseResultMap">
+       SELECT "ID","UPDATETIME","CREATETIME","CREATOR","NAME","DESCRIBE","IP"
+       ,"URL","DEPARTMENT","TYPE"
+       ,CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
+       ,CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+		,"DEPARTMENTID"
+		FROM "yftest"."c_knowledgegraph_neo4j"
+		WHERE "ID" = #{id}
+	</select>
+	<select id="findVoById" resultMap="ResultVo">
+        <include refid="select"></include>
+		where "ID" = #{id}
+	</select>
+	<select id="findByName" resultMap="BaseResultMap">
+        <include refid="select"></include>
+		where "NAME" = #{name} AND "CREATOR"=#{creator}
+	</select>
+	<select id="findByCreator" resultMap="BaseResultMap">
+        <include refid="select"></include>
+	    WHERE "OP"=0 AND "CREATOR"=#{creator} 
+	</select>
+	<select id="findUserById" resultMap="BaseResultMap">
+        SELECT CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
+        CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+        ,"URL","DEPARTMENTID"
+		where "ID" = #{id} and CREATOR=#{creator}
+	</select>
+	<select id="totalRecord" resultType="int">
+	select count(ID) from "yftest"."c_knowledgegraph_neo4j"
+	 <include refid="where"></include>
+	</select>
+	<select id="findAll" resultMap="ResultVo">
+		<include refid="select"></include>
+		<include refid="where"></include>
+	</select>
+	 <select id="findByPage" resultMap="ResultVo">
+		<include refid="select"></include>
+		 <include refid="where"></include>
+	<choose>
+		<when test=" desc!=null and desc==1">
+			ORDER BY "CREATETIME" 
+		</when>
+		<otherwise>
+		ORDER BY "CREATETIME" DESC
+        </otherwise>
+	</choose>
+		 LIMIT  #{ignoreSize}, #{pageSize}
+	</select>
+    <update id="delete">
+    UPDATE "yftest"."c_knowledgegraph_neo4j"
+    SET
+    "OP"=1
+	 WHERE "ID" = #{id} and "CREATOR"=#{creator}
+	</update>
+	<update id="updateUserful">
+		UPDATE "yftest"."c_knowledgegraph_neo4j"
+		SET
+		"ISUSEFUL" = #{isuseful}
+		 WHERE "ID" = #{id}
+	</update>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO "yftest"."c_knowledgegraph_neo4j"
+	("NAME","DESCRIBE","UPDATETIME","CREATETIME","CREATOR","IP","USERNAME","PASSWORD","URL","DEPARTMENT","TYPE","ISUSEFUL"
+	,"DEPARTMENTID")
+	VALUES
+	(#{name},#{describe},CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),#{creator},#{ip},
+	ENCODE(#{username},'C2AFC139D5AEE@3794A6F965BB853F'),ENCODE(#{password},'C2AFC139D5AEE@3794A6F965BB853F'),#{url},#{department},#{type}
+	,0,#{departmentId})
+	</insert>
+	<!-- 修改部分内容,例如页码,状态 -->
+	<update id="update">
+	UPDATE "yftest"."c_knowledgegraph_neo4j"
+	SET
+	"NAME"=#{name},
+	"DESCRIBE"=#{describe},
+	"IP"=#{ip},
+	"USERNAME"=ENCODE(#{username},'C2AFC139D5AEE@3794A6F965BB853F'),
+	"PASSWORD"=ENCODE(#{password},'C2AFC139D5AEE@3794A6F965BB853F'),
+	"URL"=#{url},
+	"DEPARTMENT"=#{department},
+	"TYPE"=#{type},
+	"ISUSEFUL"=0
+	WHERE ID=#{id} and CREATOR=#{creator}
+</update>
+</mapper>

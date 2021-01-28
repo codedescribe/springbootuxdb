@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status,这个用于设置log4j2自身内部的信息输出,可以不设置,当设置成trace时,你会看到log4j2内部各种详细输出 -->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身,设置间隔秒数 -->
+
+<configuration status="INFO" monitorInterval="60">
+	<Properties>
+		<Property name="LOG_HOME">logs</Property>
+	</Properties>
+
+	<Appenders>
+     <Console  name="STDOUT" target="SYSTEM_OUT">
+          <PatternLayout pattern="[TxId : %X{PtxId} , SpanId : %X{PspanId}] [%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger{100}] %msg%n "/>
+     </Console>
+	</Appenders>
+
+	<Loggers>
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+	<Logger name="com.maxfan.springbootuxdb" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</Logger>
+	<Logger name="org.apache.mybatis" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</Logger>
+	<Logger name="com.maxfan.springbootuxdb.mapper" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</Logger>
+</Loggers>
+</configuration>
