@@ -65,8 +65,13 @@ public class Neo4jConfigController {
     
     @ResponseBody
     @RequestMapping(value = "create",method= RequestMethod.POST)
-   	public Object add(Neo4jConfig neo4jConfig) {
+   	public Object add() {
    	   long creator=174;
+		Neo4jConfig neo4jConfig=new Neo4jConfig();
+		neo4jConfig.setName("dsadas");
+		neo4jConfig.setPassword("dsadas");
+		neo4jConfig.setCreator(creator);
+		neo4jConfig.setIsuseful(true);
    		JSONObject json =neo4jConfigMgmtService.add(neo4jConfig);
    		return json;
    	}

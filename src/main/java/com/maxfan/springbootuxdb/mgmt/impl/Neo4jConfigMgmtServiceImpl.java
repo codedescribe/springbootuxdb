@@ -125,8 +125,6 @@ public class Neo4jConfigMgmtServiceImpl implements Neo4jConfigMgmtService {
         try {
             //不返回具体账号密码
             Neo4jConfig nc = neo4jConfigMapper.findById(neo4jConfig);
-            nc.setUsername("");
-            nc.setPassword("");
             json.put("code", ResultEntity.SUCCESS);
             json.put("msg", "查询成功!");
             json.put("data", nc);
@@ -147,32 +145,7 @@ public class Neo4jConfigMgmtServiceImpl implements Neo4jConfigMgmtService {
     @Override
     public JSONObject add(Neo4jConfig neo4jConfig) {
         JSONObject json = new JSONObject();
-        if (null == neo4jConfig.getName() || "".equals(neo4jConfig.getName()) || null == neo4jConfig.getUsername()
-                || "".equals(neo4jConfig.getUsername()) || neo4jConfig.getName().contains(" ")
-                || null == neo4jConfig.getPassword() || "".equals(neo4jConfig.getPassword())
-                || neo4jConfig.getPassword().contains(" ")) {
-            json.put("code", ResultEntity.FAILURE);
-            json.put("msg", "检查用户名、密码、连接地址、名称不要包含空格!");
-            return json;
-        }
-        boolean isIpLegal = isIpLegal(neo4jConfig.getUrl());
-        if (!isIpLegal) {
-            json.put("code", ResultEntity.FAILURE);
-            json.put("msg", "检查连接地址是否正确!");
-            return json;
-        }
         try {
-            boolean check = checkName(neo4jConfig);
-            if (!check) {
-                json.put("code", ResultEntity.FAILURE);
-                json.put("msg", "名称重复,请修改名称!");
-                return json;
-            }
-
-//			neo4jConfig.setUsername(new String(Base64.decodeBase64(neo4jConfig.getUsername()),"UTF-8"));
-//			neo4jConfig.setPassword(new String(Base64.decodeBase64(neo4jConfig.getPassword()),"UTF-8"));
-//			neo4jConfig.setUrl(new String(Base64.decodeBase64(neo4jConfig.getUrl()),"UTF-8"));
-            neo4jConfig.setIsuseful(false);
 
             int i = neo4jConfigMapper.insert(neo4jConfig);
             if (i > 0) {

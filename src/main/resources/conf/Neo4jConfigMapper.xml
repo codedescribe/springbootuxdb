@@ -36,20 +36,18 @@
 	<sql id="where">
 	WHERE "OP"=0
 		<if test='name != null and name != ""'>
-			and NAME like concat("%",#{name},"%")
+			and CONCAT("NAME") like concat('%',#{name},'%')
 		</if>
 		<if test='creator != null'>
-			and CREATOR = #{creator}
+			and "CREATOR" = #{creator}
 		</if>
 		<if test='type != null and type !=""'>
-			and TYPE = #{type}
+			and "TYPE" = #{type}
 		</if>
 	</sql>
     <select id="findById" resultMap="BaseResultMap">
        SELECT "ID","UPDATETIME","CREATETIME","CREATOR","NAME","DESCRIBE","IP"
-       ,"URL","DEPARTMENT","TYPE"
-       ,CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
-       ,CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+       ,"URL","DEPARTMENT","TYPE","USERNAME","PASSWORD"
 		,"DEPARTMENTID"
 		FROM "yftest"."c_knowledgegraph_neo4j"
 		WHERE "ID" = #{id}
@@ -57,8 +55,8 @@
 	<select id="findByIdAdmin" resultMap="BaseResultMap">
        SELECT "ID","UPDATETIME","CREATETIME","CREATOR","NAME","DESCRIBE","IP"
        ,"URL","DEPARTMENT","TYPE"
-       ,CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
-       ,CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+       ,"USERNAME"
+       ,"PASSWORD"
 		,"DEPARTMENTID"
 		FROM "yftest"."c_knowledgegraph_neo4j"
 		WHERE "ID" = #{id}
@@ -76,13 +74,13 @@
 	    WHERE "OP"=0 AND "CREATOR"=#{creator} 
 	</select>
 	<select id="findUserById" resultMap="BaseResultMap">
-        SELECT CAST(BINARY(DECODE(USERNAME,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "USERNAME"
-        CAST(BINARY(DECODE(PASSWORD,'C2AFC139D5AEE@3794A6F965BB853F')) AS CHAR CHARACTER SET utf8) AS "PASSWORD"
+        SELECT "USERNAME"
+        ,"PASSWORD"
         ,"URL","DEPARTMENTID"
 		where "ID" = #{id} and CREATOR=#{creator}
 	</select>
 	<select id="totalRecord" resultType="int">
-	select count(ID) from "yftest"."c_knowledgegraph_neo4j"
+	select count("ID") from "yftest"."c_knowledgegraph_neo4j"
 	 <include refid="where"></include>
 	</select>
 	<select id="findAll" resultMap="ResultVo">
@@ -100,7 +98,7 @@
 		ORDER BY "CREATETIME" DESC
         </otherwise>
 	</choose>
-		 LIMIT  #{ignoreSize}, #{pageSize}
+		  OFFSET #{ignoreSize} LIMIT #{pageSize}
 	</select>
     <update id="delete">
     UPDATE "yftest"."c_knowledgegraph_neo4j"
@@ -119,8 +117,8 @@
 	("NAME","DESCRIBE","UPDATETIME","CREATETIME","CREATOR","IP","USERNAME","PASSWORD","URL","DEPARTMENT","TYPE","ISUSEFUL"
 	,"DEPARTMENTID")
 	VALUES
-	(#{name},#{describe},CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(),#{creator},#{ip},
-	ENCODE(#{username},'C2AFC139D5AEE@3794A6F965BB853F'),ENCODE(#{password},'C2AFC139D5AEE@3794A6F965BB853F'),#{url},#{department},#{type}
+	(#{name},#{describe},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{creator},#{ip},
+	#{username},#{password},#{url},#{department},#{type}
 	,0,#{departmentId})
 	</insert>
 	<!-- 修改部分内容,例如页码,状态 -->
@@ -130,8 +128,8 @@
 	"NAME"=#{name},
 	"DESCRIBE"=#{describe},
 	"IP"=#{ip},
-	"USERNAME"=ENCODE(#{username},'C2AFC139D5AEE@3794A6F965BB853F'),
-	"PASSWORD"=ENCODE(#{password},'C2AFC139D5AEE@3794A6F965BB853F'),
+	"USERNAME"=#{username},
+	"PASSWORD"=#{password},
 	"URL"=#{url},
 	"DEPARTMENT"=#{department},
 	"TYPE"=#{type},
